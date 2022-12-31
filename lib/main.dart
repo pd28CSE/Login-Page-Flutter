@@ -7,6 +7,16 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  Color getSpecificIconColor(Set<MaterialState> states) {
+    if (states.contains(MaterialState.focused)) {
+      return Colors.green;
+    } else if (states.contains(MaterialState.error)) {
+      return Colors.red;
+    } else {
+      return Colors.purple;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -40,6 +50,8 @@ class MyApp extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(10),
           ),
+          prefixIconColor: MaterialStateColor.resolveWith(getSpecificIconColor),
+          suffixIconColor: MaterialStateColor.resolveWith(getSpecificIconColor),
         ),
       ),
       home: LoginPage(),
@@ -56,10 +68,9 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
-
   final _passwordController = TextEditingController();
-
   bool _passwordShowHide = true;
+  bool _errorTextValue = false;
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +86,17 @@ class _LoginPageState extends State<LoginPage> {
             TextField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
+              onChanged: (userEmail) {
+                setState(() {
+                  _errorTextValue = userEmail.contains(' ');
+                });
+              },
               decoration: InputDecoration(
                 labelText: 'Enter Email',
                 hintText: 'Email',
+                errorText: _errorTextValue == false
+                    ? null
+                    : 'Please Enter Valid Email',
                 prefixIcon: Icon(Icons.email),
                 labelStyle: TextStyle(color: Colors.blueGrey),
               ),
@@ -96,10 +115,8 @@ class _LoginPageState extends State<LoginPage> {
                 prefixIcon: Icon(Icons.password),
                 suffixIcon: IconButton(
                   onPressed: () {
-                    print('o--------');
                     if (_emailController.text.isNotEmpty == true &&
                         _passwordController.text.isNotEmpty == true) {
-                      print('pon-------');
                       setState(() {
                         _passwordShowHide = !_passwordShowHide;
                       });
@@ -114,7 +131,6 @@ class _LoginPageState extends State<LoginPage> {
                     .copyWith(
                       borderSide: BorderSide(color: Colors.yellow),
                     ),
-                // errorBorder:
               ),
             ),
             SizedBox(
@@ -124,6 +140,11 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {
                 print(_emailController.text);
                 print(_passwordController.text);
+                if (_emailController.text.contains('@') == false) {
+                  setState(() {
+                    _errorTextValue = true;
+                  });
+                }
               },
               child: Text('Login'),
               style: ElevatedButton.styleFrom(
