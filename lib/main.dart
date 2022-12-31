@@ -14,8 +14,33 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         accentColor: Colors.amber,
-
-        // inputDecorationTheme: InputDecorationTheme()
+        inputDecorationTheme: InputDecorationTheme(
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.purple,
+              width: 3,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.green, width: 3),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.red, //-----------------------------
+              width: 3,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.red, //-----------------------------
+              width: 3,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       ),
       home: LoginPage(),
     );
@@ -30,9 +55,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _email = TextEditingController();
+  final _emailController = TextEditingController();
 
-  final _password = TextEditingController();
+  final _passwordController = TextEditingController();
 
   bool _passwordShowHide = true;
 
@@ -48,35 +73,21 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextField(
-              controller: _email,
+              controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 labelText: 'Enter Email',
                 hintText: 'Email',
                 prefixIcon: Icon(Icons.email),
                 labelStyle: TextStyle(color: Colors.blueGrey),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                    color: Colors.purple,
-                    width: 3,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                    color: Colors.green,
-                    width: 3,
-                  ),
-                ),
               ),
             ),
             SizedBox(
               height: 10,
             ),
             TextField(
-              controller: _password,
-              enableSuggestions: false,
+              controller: _passwordController,
+              enableSuggestions: true,
               obscureText: _passwordShowHide,
               obscuringCharacter: '*',
               decoration: InputDecoration(
@@ -86,8 +97,8 @@ class _LoginPageState extends State<LoginPage> {
                 suffixIcon: IconButton(
                   onPressed: () {
                     print('o--------');
-                    if (_email.text.isNotEmpty == true &&
-                        _password.text.isNotEmpty == true) {
+                    if (_emailController.text.isNotEmpty == true &&
+                        _passwordController.text.isNotEmpty == true) {
                       print('pon-------');
                       setState(() {
                         _passwordShowHide = !_passwordShowHide;
@@ -97,25 +108,22 @@ class _LoginPageState extends State<LoginPage> {
                   icon: Icon(Icons.remove_red_eye),
                 ),
                 labelStyle: TextStyle(color: Colors.blueGrey),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.purple,
-                    width: 3,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.green,
-                      width: 3,
+                enabledBorder: Theme.of(context)
+                    .inputDecorationTheme
+                    .enabledBorder!
+                    .copyWith(
+                      borderSide: BorderSide(color: Colors.yellow),
                     ),
-                    borderRadius: BorderRadius.circular(10)),
+                // errorBorder:
               ),
+            ),
+            SizedBox(
+              height: 15,
             ),
             ElevatedButton(
               onPressed: () {
-                print(_email.text);
-                print(_password.text);
+                print(_emailController.text);
+                print(_passwordController.text);
               },
               child: Text('Login'),
               style: ElevatedButton.styleFrom(
